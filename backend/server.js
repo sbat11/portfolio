@@ -7,6 +7,7 @@ import {v2 as cloudinary} from "cloudinary";
 import auth from "./routes/authRoute.js";
 import userRoutes from "./routes/userRoute.js";
 import postRoutes from "./routes/postRoute.js"
+import notificationRoutes from "./routes/notificationRoute.js"
 
 import connectMongoDB from "./db/connectMongoDB.js";
 
@@ -29,9 +30,10 @@ app.use(express.urlencoded({ extended: true}))
 
 app.use(cookieParser());
 
-app.use("/api/auth",auth)
-app.use("/api/users", userRoutes)
+app.use("/api/auth",auth);
+app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.listen(PORT, () => {
     console.log("Server is running on port 8000");
