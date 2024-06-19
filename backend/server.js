@@ -4,9 +4,9 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import {v2 as cloudinary} from "cloudinary";
 
-import auth from "./routes/auth.js";
-import userRoutes from "./routes/userRoutes.js";
-import postRoutes from "./routes/postRoutes.js"
+import auth from "./routes/authRoute.js";
+import userRoutes from "./routes/userRoute.js";
+import postRoutes from "./routes/postRoute.js"
 
 import connectMongoDB from "./db/connectMongoDB.js";
 
