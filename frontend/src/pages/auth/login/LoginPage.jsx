@@ -87,7 +87,7 @@ const LoginPage = () => {
 					</label>
 					<button className='btn rounded-full btn-primary text-white'>Login</button>
 					{isError && <p className='text-red-500'>
-						{isPending ? "Loading..." : "Login"}</p>}
+						{isPending ? "Loading..." : "Invalid Username or Password"}</p>}
 				</form>
 				<div className='flex flex-col gap-2 mt-4'>
 					<p className='text-white text-lg'>{"Don't"} have an account?</p>
