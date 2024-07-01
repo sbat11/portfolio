@@ -70,4 +70,4 @@ const Posts = ({ feedType, username, userId }) => {
 		</>
 	);
 };
-export default Posts;
+export default Posts; 
