@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { formatPostDate } from "../../utils/date";
 
-const Posts = ({ feedType, username, userId }) => {
+const Posts = ({ feedType, username, userId}) => {
 	const getPostEndpoint = () => {
 		switch (feedType) {
 			case "forYou":
