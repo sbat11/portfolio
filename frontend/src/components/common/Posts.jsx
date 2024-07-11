@@ -2,6 +2,7 @@ import Post from "./Post";
 import PostSkeleton from "../skeletons/PostSkeleton";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { formatPostDate } from "../../utils/date";
 
 const Posts = ({ feedType, username, userId }) => {
 	const getPostEndpoint = () => {
@@ -62,12 +63,14 @@ const Posts = ({ feedType, username, userId }) => {
 			)}
 			{!isLoading && !isRefetching && posts && (
 				<div>
-					{posts.map((post) => (
-						<Post key={post._id} post={post} />
-					))}
+					{[...posts]
+						.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // sort posts by createdAt date
+						.map((post) => (
+							<Post key={post._id} post={post} />
+						))}
 				</div>
 			)}
 		</>
 	);
 };
-export default Posts; 
+export default Posts;
