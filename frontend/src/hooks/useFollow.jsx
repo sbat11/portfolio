@@ -13,7 +13,7 @@ const useFollow = () => {
                 const data = await res.json();
     
                 if(!res.ok){
-                    throw new Error(data.message || "Failed to follow user");
+                    throw new Error(data.error || "Failed to follow user");
                 }
                 return;
             } catch(error){
