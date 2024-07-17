@@ -11,14 +11,13 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { useQuery} from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { formatMemberSinceDate } from "../../utils/date";
 
-import useFollow from "../../hooks/useFollow"
+import useFollow from "../../hooks/useFollow";
 import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
 
 const ProfilePage = () => {
-	
 	const [coverImg, setCoverImg] = useState(null);
 	const [profileImg, setProfileImg] = useState(null);
 	const [feedType, setFeedType] = useState("posts");
@@ -26,36 +25,35 @@ const ProfilePage = () => {
 	const coverImgRef = useRef(null);
 	const profileImgRef = useRef(null);
 
-	const {username} = useParams();
-	
-	const { follow, isPending } = useFollow()
+	const { username } = useParams();
 
-	const {data:authUser } = useQuery({queryKey: ["authUser"]})
+	const { follow, isPending } = useFollow();
+	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
-	const {data:user, isLoading, refetch, isRefetching} = useQuery({
-		queryKey:["userProfile"],
-		queryFn:async () => {
+	const {
+		data: user,
+		isLoading,
+		refetch,
+		isRefetching,
+	} = useQuery({
+		queryKey: ["userProfile"],
+		queryFn: async () => {
 			try {
-				const res = await fetch(`/api/users/profile/${username}`)
+				const res = await fetch(`/api/users/profile/${username}`);
 				const data = await res.json();
-
-				if(!res.ok){
+				if (!res.ok) {
 					throw new Error(data.error || "Something went wrong");
 				}
 				return data;
-			} catch(error){
-				throw new Error(error.message);
+			} catch (error) {
+				throw new Error(error);
 			}
-		}
-	})
+		},
+	});
 
-	const {isUpdatingProfile, updateProfile} = useUpdateUserProfile({
-		coverImg,
-		profileImg,
-	})
+	const { isUpdatingProfile, updateProfile } = useUpdateUserProfile();
 
-
-	const isMyProfile = authUser._id === user?._id
+	const isMyProfile = authUser._id === user?._id;
 	const memberSinceDate = formatMemberSinceDate(user?.createdAt);
 	const amIFollowing = authUser?.following.includes(user?._id);
 
@@ -70,18 +68,19 @@ const ProfilePage = () => {
 			reader.readAsDataURL(file);
 		}
 	};
+
 	useEffect(() => {
-		refetch()
-	}, [username, feedType, refetch])
+		refetch();
+	}, [username, refetch, feedType]);
 
 	return (
 		<>
 			<div className='flex-[4_4_0]  border-r border-gray-700 min-h-screen '>
 				{/* HEADER */}
 				{(isLoading || isRefetching) && <ProfileHeaderSkeleton />}
-				{!isLoading && !user &&!isRefetching && <p className='text-center text-lg mt-4'>User not found</p>}
+				{!isLoading && !isRefetching && !user && <p className='text-center text-lg mt-4'>User not found</p>}
 				<div className='flex flex-col'>
-					{!isLoading && user && !isRefetching && (
+					{!isLoading && !isRefetching && user && (
 						<>
 							<div className='flex gap-10 px-4 py-2 items-center'>
 								<Link to='/'>
@@ -111,14 +110,14 @@ const ProfilePage = () => {
 								<input
 									type='file'
 									hidden
-                                    accept="image/*"
+									accept='image/*'
 									ref={coverImgRef}
 									onChange={(e) => handleImgChange(e, "coverImg")}
 								/>
 								<input
 									type='file'
 									hidden
-                                    accept="image/*"
+									accept='image/*'
 									ref={profileImgRef}
 									onChange={(e) => handleImgChange(e, "profileImg")}
 								/>
@@ -138,7 +137,7 @@ const ProfilePage = () => {
 								</div>
 							</div>
 							<div className='flex justify-end px-4 mt-5'>
-								{isMyProfile && <EditProfileModal authUser={authUser}/>}
+								{isMyProfile && <EditProfileModal authUser={authUser} />}
 								{!isMyProfile && (
 									<button
 										className='btn btn-outline rounded-full btn-sm'
@@ -153,12 +152,12 @@ const ProfilePage = () => {
 									<button
 										className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'
 										onClick={async () => {
-											await updateProfile({coverImg, profileImg})
-											setCoverImg(null);
+											await updateProfile({ coverImg, profileImg });
 											setProfileImg(null);
+											setCoverImg(null);
 										}}
 									>
-										{isUpdatingProfile ? "Updating..." : "Save"}
+										{isUpdatingProfile ? "Updating..." : "Update"}
 									</button>
 								)}
 							</div>
@@ -181,7 +180,7 @@ const ProfilePage = () => {
 													rel='noreferrer'
 													className='text-sm text-blue-500 hover:underline'
 												>
-													youtube.com/@asaprogrammer_
+													{user?.link}
 												</a>
 											</>
 										</div>
@@ -225,7 +224,7 @@ const ProfilePage = () => {
 						</>
 					)}
 
-					<Posts feedType={feedType} username={username} userId = {user?._id}/>
+					<Posts username={username} feedType={feedType} />
 				</div>
 			</div>
 		</>

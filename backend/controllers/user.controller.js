@@ -2,7 +2,13 @@ import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
 
 import bcrypt from "bcrypt";
-import {v2 as cloudinary} from "cloudinary";
+import ImageKit from "imagekit";
+
+const imagekit = new ImageKit({
+	publicKey: "public_3drUYVPhfAdqQjgWKZQ/Zi54qR0=",
+	privateKey: "private_nCy9YDmZcf2ItA1ILVa3lfSdKGk=",
+	urlEndpoint: "https://ik.imagekit.io/sbat11",
+});
 
 export const getUserProfile = async (req, res) => {
     const {username} = req.params;
@@ -108,17 +114,43 @@ export const updateUser = async(req, res) =>{
         }
         if(profileImg){
             if(user.profileImg){
-                await cloudinary.uploader.destroy(user.profileImg.split("/").pop().split(".")[0]);
+                const pImg = user.profileImg.split("/").pop().split(".")[0];
+                imagekit.deleteFile(pImg, function(error, result){
+                    if(error)
+                        console.log(error);
+                    else
+                        console.log(result);
+                })
+                imagekit.upload({
+                    file : profileImg, //required
+                    fileName : "profileImg",   //required
+                }, function(error, result) {
+                    if(error) 
+                        console.log(error);
+                    else 
+                        console.log(result);
+                });
             }
-            const uploadedResponse = await cloudinary.uploader.upload(profileImg);
-            profileImg = uploadedResponse.secure_url;
         }
         if(coverImg){
             if(user.coverImg){
-                await cloudinary.uploader.destroy(user.coverImg.split("/").pop().split(".")[0]);
+                const cImg = user.coverImg.split("/").pop().split(".")[0];
+                imagekit.deleteFile(cImg, function(error, result){
+                    if(error)
+                        console.log(error);
+                    else
+                        console.log(result);
+                })
+                imagekit.upload({
+                    file : coverImg, //required
+                    fileName : "coverImg",   //required
+                }, function(error, result) {
+                    if(error) 
+                        console.log(error);
+                    else 
+                        console.log(result);
+                });
             }
-            const uploadedResponse = await cloudinary.uploader.upload(coverImg);
-            coverImg = uploadedResponse.secure_url;
         }
         user.fullName = fullName || user.fullName;
         user.email = email || user.email;

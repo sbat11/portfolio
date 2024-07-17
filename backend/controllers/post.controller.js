@@ -1,10 +1,18 @@
 import User from '../models/user.model.js'
 import Post from '../models/post.model.js';
 import Notification from '../models/notification.model.js';
-import { v2 as cloudinary } from 'cloudinary';
+import ImageKit from 'imagekit';
+
+const imagekit = new ImageKit({
+	publicKey: "public_3drUYVPhfAdqQjgWKZQ/Zi54qR0=",
+	privateKey: "private_nCy9YDmZcf2ItA1ILVa3lfSdKGk=",
+	urlEndpoint: "https://ik.imagekit.io/sbat11",
+});
 
 export const createPost = async (req, res) => {
 	try {
+		
+
 		const { text } = req.body;
 		let { img } = req.body;
 		const userId = req.user._id.toString();
@@ -15,11 +23,15 @@ export const createPost = async (req, res) => {
 		if (!text && !img) {
 			return res.status(400).json({ error: "Post must have text or image" });
 		}
-
-		if (img) {
-			const uploadedResponse = await cloudinary.uploader.upload(img);
-			img = uploadedResponse.secure_url;
-		}
+		imagekit.upload({
+			file : img, //required
+			fileName : "m",   //required
+		}, function(error, result) {
+			if(error) 
+				console.log(error);
+			else 
+				console.log(result);
+		});
 
 		const newPost = new Post({
 			user: userId,
@@ -49,7 +61,12 @@ export const deletePost = async (req, res) => {
 
         if(post.img){
             const imgId = post.img.split("/").pop().split(".")[0];
-            await cloudinary.uplpoader.destroy(imgId);
+            imagekit.deleteFile(imgId, function(error, result){
+				if(error)
+					console.log(error);
+				else
+					console.log(result);
+			})
         }
 
         await Post.findByIdAndDelete(req.params.id);
